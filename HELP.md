@@ -513,6 +513,84 @@ Click **"Publish"**
 
 ---
 
+## 📊 Google Analytics Setup
+
+### Easy Setup - Just ONE Step!
+
+Your blog has **automatic page tracking** built-in. You only need to add your GA4 Measurement ID in ONE place.
+
+### Step 1: Get Your GA4 Measurement ID
+
+1. Go to [Google Analytics](https://analytics.google.com/)
+2. Click **Admin** (⚙️ gear icon)
+3. Click **Create Property** (or select existing)
+4. Set up a **Web** data stream
+5. Copy your **Measurement ID** (starts with `G-`)
+
+### Step 2: Add to Your App
+
+Edit `src/utils/analytics.ts` and update this line:
+
+```typescript
+export const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // Replace with your GA4 ID
+```
+
+Change to your actual ID:
+
+```typescript
+export const GA_MEASUREMENT_ID = 'G-ABC123XYZ'; // Your real ID
+```
+
+### Step 3: Deploy
+
+```bash
+npm run build
+firebase deploy --only hosting
+```
+
+**That's it!** ✅ All pages and events are now tracked automatically.
+
+---
+
+### What's Automatically Tracked
+
+| Event | When It's Tracked |
+|-------|-------------------|
+| **Page Views** | Every page navigation |
+| **Article Views** | When someone reads an article |
+| **Article Likes** | When someone likes an article |
+| **Article Bookmarks** | When someone bookmarks |
+| **Subscribe** | When someone subscribes to newsletter |
+| **Category Filter** | When someone filters by category |
+| **Search** | When someone uses search |
+| **Social Clicks** | When someone clicks social links |
+| **Scroll Depth** | At 25%, 50%, 75%, 100% scroll |
+| **Time on Page** | When leaving a page |
+
+### View Your Analytics
+
+1. Go to [Google Analytics](https://analytics.google.com/)
+2. Select your property
+3. Click **Reports** → **Realtime** to see live visitors
+4. Click **Reports** → **Engagement** → **Events** for all tracked events
+
+### Custom Event Tracking
+
+You can also track custom events in your code:
+
+```typescript
+import { analytics } from '@/hooks/useAnalytics';
+
+// Track custom events
+analytics.articleView(postId, title, category);
+analytics.articleLike(postId);
+analytics.subscribe('header-popup');
+analytics.search('AI trends');
+analytics.socialClick('twitter');
+```
+
+---
+
 ## 🚀 Deployment
 
 ### Deploy Changes

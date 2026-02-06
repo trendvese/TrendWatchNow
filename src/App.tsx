@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { cn } from '@/utils/cn';
 import { posts as staticPosts } from '@/data/posts';
 import { Post } from '@/types/post';
+import { usePageTracking } from '@/hooks/useAnalytics';
 import { AnimatedBackground } from '@/components/AnimatedBackground';
 import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/HeroSection';
@@ -26,6 +27,9 @@ type View = 'blog' | 'admin' | 'about' | 'contact' | 'privacy' | 'terms' | 'disc
 
 export function App() {
   const [currentView, setCurrentView] = useState<View>('blog');
+  
+  // Track page views automatically
+  usePageTracking(`/${currentView === 'blog' ? '' : currentView}`, `TrendWatch Now - ${currentView.charAt(0).toUpperCase() + currentView.slice(1)}`);
   const [darkMode, setDarkMode] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');

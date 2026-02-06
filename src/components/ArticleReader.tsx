@@ -6,6 +6,7 @@ import SEOHead from './SEOHead';
 import Breadcrumbs from './Breadcrumbs';
 import { InArticleAd } from './AdUnit';
 import { parseMarkdown } from '@/utils/markdownParser';
+import { analytics } from '@/hooks/useAnalytics';
 
 interface ArticleReaderProps {
   post: Post;
@@ -18,6 +19,11 @@ export function ArticleReader({ post, darkMode, onClose }: ArticleReaderProps) {
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [reactions, setReactions] = useState({ liked: false, count: post.reactions });
   const category = categories[post.category];
+
+  // Track article view on mount
+  useEffect(() => {
+    analytics.articleView(post.id, post.title, post.category);
+  }, [post.id, post.title, post.category]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -41,6 +47,18 @@ export function ArticleReader({ post, darkMode, onClose }: ArticleReaderProps) {
       liked: !prev.liked,
       count: prev.liked ? prev.count - 1 : prev.count + 1
     }));
+    // Track like action
+    if (!reactions.liked) {
+      analytics.articleLike(post.id);
+    }
+  };
+
+  const handleBookmark = () => {
+    setIsBookmarked(!isBookmarked);
+    // Track bookmark action
+    if (!isBookmarked) {
+      analytics.articleBookmark(post.id);
+    }
   };
 
   const formatContent = (content: string) => {
@@ -271,7 +289,7 @@ export function ArticleReader({ post, darkMode, onClose }: ArticleReaderProps) {
                   <span className="font-medium">{reactions.count}</span>
                 </button>
                 <button 
-                  onClick={() => setIsBookmarked(!isBookmarked)}
+                  onClick={handleBookmark}
                   aria-label={isBookmarked ? "Remove bookmark" : "Bookmark article"}
                   className={cn(
                     "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-300",

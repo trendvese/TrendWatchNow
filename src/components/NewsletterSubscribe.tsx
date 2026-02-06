@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/utils/cn';
 import { addSubscriber } from '@/services/subscriberService';
+import { analytics } from '@/hooks/useAnalytics';
 
 interface NewsletterSubscribeProps {
   darkMode: boolean;
@@ -41,6 +42,9 @@ export function NewsletterSubscribe({ darkMode, variant = 'sidebar' }: Newslette
         setStatus('success');
         setMessage(result.message);
         setEmail('');
+        
+        // Track subscription in analytics
+        analytics.subscribe(variant);
         
         // Reset after 5 seconds
         setTimeout(() => {
