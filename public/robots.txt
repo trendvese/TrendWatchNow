@@ -1,0 +1,15 @@
+# TrendVerse Robots.txt
+# https://trendverse.com
+
+User-agent: *
+Allow: /
+
+# Disallow admin areas (if any)
+Disallow: /admin/
+Disallow: /api/
+
+# Sitemap location
+Sitemap: https://trendverse-blog.web.app/sitemap.xml
+
+# Crawl delay for polite crawling
+Crawl-delay: 1
