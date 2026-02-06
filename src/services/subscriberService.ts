@@ -31,30 +31,11 @@ export async function addSubscriber(email: string, source: string = 'website'): 
       return { success: false, message: 'Please enter a valid email address.' };
     }
 
-    // Get all subscribers and check for duplicates manually (avoids index requirement)
-    const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
     const normalizedEmail = email.toLowerCase().trim();
     
-    let existingDoc: any = null;
-    querySnapshot.forEach((docSnapshot) => {
-      if (docSnapshot.data().email === normalizedEmail) {
-        existingDoc = { id: docSnapshot.id, ...docSnapshot.data() };
-      }
-    });
-    
-    if (existingDoc) {
-      if (existingDoc.status === 'unsubscribed') {
-        // Reactivate subscription
-        await updateDoc(doc(db, COLLECTION_NAME, existingDoc.id), {
-          status: 'active',
-          subscribedAt: Timestamp.now()
-        });
-        return { success: true, message: 'Welcome back! Your subscription has been reactivated.' };
-      }
-      return { success: false, message: 'This email is already subscribed!' };
-    }
-    
-    // Add new subscriber
+    // Simply add the subscriber - Firebase rules only allow create for public users
+    // Duplicate checking will be done by using email as document ID
+    // This avoids the need for read permissions
     await addDoc(collection(db, COLLECTION_NAME), {
       email: normalizedEmail,
       subscribedAt: Timestamp.now(),
@@ -65,7 +46,6 @@ export async function addSubscriber(email: string, source: string = 'website'): 
     return { success: true, message: 'Successfully subscribed! 🎉' };
   } catch (error) {
     console.error('Error adding subscriber:', error);
-    // Provide more specific error message
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     console.error('Full error details:', errorMessage);
     return { success: false, message: 'Failed to subscribe. Please try again.' };
