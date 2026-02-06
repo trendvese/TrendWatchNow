@@ -83,9 +83,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ onBack }) => {
                   📍
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">Address</h3>
-                  <p className="text-gray-400">123 Tech Street</p>
-                  <p className="text-gray-400">San Francisco, CA 94102</p>
+                  <h3 className="font-semibold text-white">Location</h3>
+                  <p className="text-gray-400">Based in New Delhi, India</p>
                 </div>
               </div>
 
