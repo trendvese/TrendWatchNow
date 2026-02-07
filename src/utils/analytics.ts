@@ -1,7 +1,7 @@
 // Google Analytics 4 (GA4) Utility
 // Just update the GA_MEASUREMENT_ID below with your GA4 ID
 
-export const GA_MEASUREMENT_ID = 'G-G-R34L0FDXRL'; // Replace with your GA4 ID
+export const GA_MEASUREMENT_ID = 'G-R34L0FDXRL'; // Replace with your GA4 ID
 
 // Check if GA is loaded
 export const isGALoaded = (): boolean => {
