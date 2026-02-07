@@ -1,6 +1,39 @@
-# 📚 TrendVerse Blog - Complete Help Guide
+# 📚 TrendWatch Now - Complete Help Guide
 
-Welcome to your TrendVerse blog! This guide covers everything you need to know.
+Welcome to your TrendWatch Now blog! This guide covers everything you need to know.
+
+---
+
+## 🔗 URL Routing (SEO-Friendly URLs)
+
+Your blog supports **direct URL access** for all pages. Users can share and access articles directly via URL.
+
+### Available Routes
+
+| Route | Example | Description |
+|-------|---------|-------------|
+| `/` | `trendwatchnow.com/` | Homepage |
+| `/article/:slug` | `trendwatchnow.com/article/ai-wars-2025` | Article page |
+| `/category/:id` | `trendwatchnow.com/category/tech` | Category page |
+| `/about` | `trendwatchnow.com/about` | About page |
+| `/contact` | `trendwatchnow.com/contact` | Contact page |
+| `/privacy` | `trendwatchnow.com/privacy` | Privacy Policy |
+| `/terms` | `trendwatchnow.com/terms` | Terms of Service |
+| `/disclaimer` | `trendwatchnow.com/disclaimer` | Disclaimer |
+| `/admin` | `trendwatchnow.com/admin` | Admin Panel |
+
+### How Article URLs Work
+
+Article URLs are generated from the title:
+
+| Title | URL Slug |
+|-------|----------|
+| "AI Wars 2025: OpenAI vs Google" | `/article/ai-wars-2025-openai-vs-google` |
+| "Bitcoin Halving 2024" | `/article/bitcoin-halving-2024` |
+
+### Sitemap URLs Now Work!
+
+When you copy a URL from your sitemap and paste it in the browser, it will open the correct article! ✅
 
 ---
 
@@ -25,8 +58,8 @@ Welcome to your TrendVerse blog! This guide covers everything you need to know.
 
 | URL | Purpose |
 |-----|---------|
-| `https://trendverse-blog.web.app` | Your live blog |
-| `https://trendverse-blog.web.app` → Click "Admin Panel" | Admin dashboard |
+| `https://trendwatchnow.com` | Your live blog |
+| `https://trendwatchnow.com/admin` | Admin dashboard |
 
 ### First Time Setup Checklist
 
@@ -511,6 +544,8 @@ Click **"Publish"**
 | Firestore | https://console.firebase.google.com/project/trendverse-blog/firestore |
 | Hosting | https://console.firebase.google.com/project/trendverse-blog/hosting |
 
+> **Note:** Your Firebase project ID is `trendverse-blog` but your custom domain is `trendwatchnow.com`
+
 ---
 
 ## 📊 Google Analytics Setup
@@ -632,10 +667,29 @@ firebase deploy --only hosting
 
 | Content | Automatically Included |
 |---------|------------------------|
-| **Published Posts** | ✅ Yes (all your articles) |
+| **Static Posts** | ✅ Yes (from src/data/posts/) |
+| **Firebase Posts** | ✅ Yes (from admin panel) |
 | **Static Pages** | ✅ Yes (About, Contact, Privacy, Terms, Disclaimer) |
 | **Category Pages** | ✅ Yes (all 12 categories) |
 | **Draft Posts** | ❌ No (excluded automatically) |
+
+### SEO-Friendly URLs (Slugs)
+
+The sitemap now generates **human-readable URLs** automatically:
+
+| Post Type | URL Example |
+|-----------|-------------|
+| **Static Posts** | `/article/ai-wars-2025` ✅ |
+| **Firebase Posts** | `/article/how-to-use-chatgpt` ✅ |
+| **Old Firebase Posts** (no slug) | `/article/your-article-title-here` ✅ |
+
+When you create a new post from the admin panel, a **slug is automatically generated** from your title:
+
+| Title | Generated Slug |
+|-------|----------------|
+| "How AI is Changing Healthcare" | `how-ai-is-changing-healthcare` |
+| "iPhone 16 Pro Review: Worth It?" | `iphone-16-pro-review-worth-it` |
+| "Top 10 Crypto Coins for 2025" | `top-10-crypto-coins-for-2025` |
 
 ### When to Regenerate Sitemap
 

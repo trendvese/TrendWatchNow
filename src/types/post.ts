@@ -14,6 +14,7 @@ export interface Post {
   trending: boolean;
   views: number;
   reactions: number;
+  slug?: string;  // SEO-friendly URL slug
   status?: 'published' | 'draft';
   createdAt?: any;
   updatedAt?: any;

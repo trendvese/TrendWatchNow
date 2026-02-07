@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { categories } from '@/data/categories';
 import { cn } from '@/utils/cn';
 import { posts as staticPosts } from '@/data/posts';
 import { Post } from '@/types/post';
@@ -23,13 +25,25 @@ import {
   DisclaimerPage 
 } from '@/components/pages';
 
-type View = 'blog' | 'admin' | 'about' | 'contact' | 'privacy' | 'terms' | 'disclaimer';
+// Generate slug from title
+const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .substring(0, 60)
+    .replace(/-$/, '');
+};
 
-export function App() {
-  const [currentView, setCurrentView] = useState<View>('blog');
+// Home/Blog Page Component
+function HomePage() {
+  const navigate = useNavigate();
+  const location = useLocation();
   
-  // Track page views automatically
-  usePageTracking(`/${currentView === 'blog' ? '' : currentView}`, `TrendWatch Now - ${currentView.charAt(0).toUpperCase() + currentView.slice(1)}`);
+  // Track page views
+  usePageTracking(location.pathname, 'TrendWatch Now - Home');
+  
   const [darkMode, setDarkMode] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
@@ -56,11 +70,10 @@ export function App() {
     };
 
     loadFirebasePosts();
-  }, [currentView]); // Reload when switching back from admin
+  }, []);
 
-  // Combine Firebase posts with static posts (Firebase posts first - they're newer)
+  // Combine Firebase posts with static posts
   const allPosts = useMemo(() => {
-    // Remove duplicates by ID (Firebase posts take priority)
     const firebaseIds = new Set(firebasePosts.map(p => p.id));
     const filteredStaticPosts = staticPosts.filter(p => !firebaseIds.has(p.id));
     return [...firebasePosts, ...filteredStaticPosts];
@@ -90,25 +103,11 @@ export function App() {
     return result;
   }, [remainingPosts]);
 
-  // Show different pages based on currentView
-  if (currentView === 'admin') {
-    return <AdminPanel onBack={() => setCurrentView('blog')} />;
-  }
-  if (currentView === 'about') {
-    return <AboutPage onBack={() => setCurrentView('blog')} />;
-  }
-  if (currentView === 'contact') {
-    return <ContactPage onBack={() => setCurrentView('blog')} />;
-  }
-  if (currentView === 'privacy') {
-    return <PrivacyPolicyPage onBack={() => setCurrentView('blog')} />;
-  }
-  if (currentView === 'terms') {
-    return <TermsOfServicePage onBack={() => setCurrentView('blog')} />;
-  }
-  if (currentView === 'disclaimer') {
-    return <DisclaimerPage onBack={() => setCurrentView('blog')} />;
-  }
+  // Handle post click - navigate to article URL
+  const handlePostClick = (post: Post) => {
+    const slug = generateSlug(post.title);
+    navigate(`/article/${slug}`);
+  };
 
   return (
     <div className={cn(
@@ -143,7 +142,7 @@ export function App() {
         {/* Admin Access Button */}
         <div className="mb-4 flex justify-end">
           <button
-            onClick={() => setCurrentView('admin')}
+            onClick={() => navigate('/admin')}
             className={cn(
               "flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300",
               "bg-gradient-to-r from-violet-500/10 to-pink-500/10 border border-violet-500/30",
@@ -196,7 +195,7 @@ export function App() {
             <HeroSection 
               post={featuredPost} 
               darkMode={darkMode} 
-              onClick={() => setSelectedPost(featuredPost)}
+              onClick={() => handlePostClick(featuredPost)}
             />
           </div>
         )}
@@ -243,7 +242,7 @@ export function App() {
                     post={item}
                     darkMode={darkMode}
                     featured={!searchQuery && activeCategory === 'all' && index === 0}
-                    onClick={() => setSelectedPost(item)}
+                    onClick={() => handlePostClick(item)}
                   />
                 );
               })}
@@ -289,7 +288,7 @@ export function App() {
               <TrendingSidebar 
                 posts={allPosts} 
                 darkMode={darkMode}
-                onPostClick={setSelectedPost}
+                onPostClick={(post) => handlePostClick(post)}
               />
 
               {/* Sidebar Ad */}
@@ -392,15 +391,15 @@ export function App() {
           </p>
           <nav className="flex flex-wrap justify-center gap-4 md:gap-6 mt-4" aria-label="Footer navigation">
             {[
-              { label: 'About', view: 'about' as View },
-              { label: 'Contact', view: 'contact' as View },
-              { label: 'Privacy Policy', view: 'privacy' as View },
-              { label: 'Terms of Service', view: 'terms' as View },
-              { label: 'Disclaimer', view: 'disclaimer' as View },
+              { label: 'About', path: '/about' },
+              { label: 'Contact', path: '/contact' },
+              { label: 'Privacy Policy', path: '/privacy' },
+              { label: 'Terms of Service', path: '/terms' },
+              { label: 'Disclaimer', path: '/disclaimer' },
             ].map((link) => (
               <button
                 key={link.label}
-                onClick={() => setCurrentView(link.view)}
+                onClick={() => navigate(link.path)}
                 className={cn(
                   "text-sm transition-colors hover:text-violet-400",
                   darkMode ? "text-slate-400" : "text-slate-600"
@@ -413,7 +412,7 @@ export function App() {
         </footer>
       </main>
 
-      {/* Article Reader Modal */}
+      {/* Article Reader Modal (for backward compatibility) */}
       {selectedPost && (
         <ArticleReader
           post={selectedPost}
@@ -422,5 +421,250 @@ export function App() {
         />
       )}
     </div>
+  );
+}
+
+// Article Page Component
+function ArticlePage() {
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const [post, setPost] = useState<Post | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    const findPost = async () => {
+      if (!slug) {
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+
+      // Check static posts
+      const staticPost = staticPosts.find(p => {
+        const postSlug = generateSlug(p.title);
+        return postSlug === slug || p.id === slug;
+      });
+
+      if (staticPost) {
+        setPost(staticPost);
+        setLoading(false);
+        return;
+      }
+
+      // Check Firebase posts
+      try {
+        const firebasePosts = await getFirebasePosts();
+        const firebasePost = firebasePosts.find(p => {
+          const postSlug = (p as any).slug || generateSlug(p.title);
+          return postSlug === slug || p.id === slug;
+        });
+
+        if (firebasePost) {
+          setPost(firebasePost);
+        } else {
+          setNotFound(true);
+        }
+      } catch (error) {
+        console.error('Error fetching post:', error);
+        setNotFound(true);
+      }
+
+      setLoading(false);
+    };
+
+    findPost();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading article...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound || !post) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <SEOHead 
+          title="Article Not Found - TrendWatch Now"
+          description="The article you're looking for doesn't exist or has been removed."
+        />
+        <div className="text-center px-4">
+          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4">
+            404
+          </h1>
+          <h2 className="text-2xl font-bold text-white mb-4">Article Not Found</h2>
+          <p className="text-gray-400 mb-8 max-w-md">
+            The article you're looking for doesn't exist or has been removed.
+          </p>
+          <button
+            onClick={() => navigate('/')}
+            className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/30 transition-all"
+          >
+            ← Back to Homepage
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return <ArticleReader post={post} darkMode={true} onClose={() => navigate('/')} />;
+}
+
+// Category Page Component
+function CategoryPage() {
+  const navigate = useNavigate();
+  const { categoryId } = useParams();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const category = categoryId ? categories[categoryId as keyof typeof categories] : null;
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      if (!categoryId || !category) {
+        setLoading(false);
+        return;
+      }
+
+      const filteredStaticPosts = staticPosts.filter(p => p.category === categoryId);
+
+      try {
+        const firebasePosts = await getFirebasePosts();
+        const filteredFirebasePosts = firebasePosts.filter(p => p.category === categoryId);
+
+        const allPosts = [...filteredFirebasePosts, ...filteredStaticPosts];
+        const uniquePosts = allPosts.reduce((acc: Post[], current) => {
+          const exists = acc.find(p => generateSlug(p.title) === generateSlug(current.title));
+          if (!exists) acc.push(current);
+          return acc;
+        }, []);
+
+        setPosts(uniquePosts);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        setPosts(filteredStaticPosts);
+      }
+
+      setLoading(false);
+    };
+
+    fetchPosts();
+  }, [categoryId, category]);
+
+  if (!category) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <SEOHead 
+          title="Category Not Found - TrendWatch Now"
+          description="The category you're looking for doesn't exist."
+        />
+        <div className="text-center px-4">
+          <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4">404</h1>
+          <h2 className="text-2xl font-bold text-white mb-4">Category Not Found</h2>
+          <button onClick={() => navigate('/')} className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold">
+            ← Back to Homepage
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-950">
+      <SEOHead 
+        title={`${category.label} News & Articles - TrendWatch Now`}
+        description={`Latest ${category.label.toLowerCase()} news, articles, reviews and updates.`}
+      />
+
+      <header className="bg-gradient-to-b from-gray-900 to-gray-950 border-b border-white/10">
+        <div className="container mx-auto px-4 py-6 flex items-center justify-between">
+          <a href="/" className="flex items-center gap-2">
+            <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">TrendWatch</span>
+            <span className="text-white font-bold">Now</span>
+          </a>
+          <button onClick={() => navigate('/')} className="px-4 py-2 text-sm text-gray-400 hover:text-white">← Back</button>
+        </div>
+      </header>
+
+      <div className={`py-16 bg-gradient-to-r ${category.color}`}>
+        <div className="container mx-auto px-4 text-center">
+          <span className="text-6xl mb-4 block">{category.icon}</span>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">{category.label}</h1>
+          <p className="text-white/80 text-lg">{posts.length} articles found</p>
+        </div>
+      </div>
+
+      <main className="container mx-auto px-4 py-12">
+        {loading ? (
+          <div className="text-center py-20">
+            <div className="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          </div>
+        ) : posts.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts.map((post) => (
+              <PostCard key={post.id} post={post} darkMode={true} onClick={() => navigate(`/article/${generateSlug(post.title)}`)} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-gray-400 text-lg">No articles found in this category.</p>
+            <button onClick={() => navigate('/')} className="mt-6 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold">Browse All</button>
+          </div>
+        )}
+      </main>
+    </div>
+  );
+}
+
+// Main App with Router
+export function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Home */}
+        <Route path="/" element={<HomePage />} />
+        
+        {/* Article */}
+        <Route path="/article/:slug" element={<ArticlePage />} />
+        
+        {/* Category */}
+        <Route path="/category/:categoryId" element={<CategoryPage />} />
+        
+        {/* Admin */}
+        <Route path="/admin" element={<AdminPanel onBack={() => window.location.href = '/'} />} />
+        
+        {/* Static Pages */}
+        <Route path="/about" element={<AboutPage onBack={() => window.location.href = '/'} />} />
+        <Route path="/contact" element={<ContactPage onBack={() => window.location.href = '/'} />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage onBack={() => window.location.href = '/'} />} />
+        <Route path="/terms" element={<TermsOfServicePage onBack={() => window.location.href = '/'} />} />
+        <Route path="/disclaimer" element={<DisclaimerPage onBack={() => window.location.href = '/'} />} />
+        
+        {/* 404 */}
+        <Route path="*" element={
+          <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+            <div className="text-center px-4">
+              <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 mb-4">
+                404
+              </h1>
+              <h2 className="text-2xl font-bold text-white mb-4">Page Not Found</h2>
+              <p className="text-gray-400 mb-8">The page you're looking for doesn't exist.</p>
+              <a
+                href="/"
+                className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold inline-block"
+              >
+                ← Back to Homepage
+              </a>
+            </div>
+          </div>
+        } />
+      </Routes>
+    </BrowserRouter>
   );
 }

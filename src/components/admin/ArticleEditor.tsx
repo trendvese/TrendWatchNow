@@ -16,6 +16,17 @@ const DEFAULT_AUTHOR = {
   avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop'
 };
 
+// Generate URL-friendly slug from title
+const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')    // Remove special characters
+    .replace(/\s+/g, '-')             // Replace spaces with hyphens
+    .replace(/-+/g, '-')              // Replace multiple hyphens with single
+    .replace(/^-|-$/g, '')            // Remove leading/trailing hyphens
+    .substring(0, 60);                // Limit length
+};
+
 // Calculate read time
 const calculateReadTime = (content: string) => {
   const wordsPerMinute = 200;
@@ -113,6 +124,9 @@ export default function ArticleEditor({ post, onSave, onCancel }: ArticleEditorP
 
     setIsSaving(true);
 
+    // Generate slug from title
+    const slug = generateSlug(formData.title);
+    
     const postData = {
       title: formData.title,
       excerpt: formData.excerpt,
@@ -128,6 +142,7 @@ export default function ArticleEditor({ post, onSave, onCancel }: ArticleEditorP
       trending: formData.trending,
       views: post?.views || 0,
       reactions: post?.reactions || 0,
+      slug: slug,  // SEO-friendly URL slug
       status
     };
 
