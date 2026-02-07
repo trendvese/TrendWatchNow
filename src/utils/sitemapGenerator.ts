@@ -1,249 +1,207 @@
-// Sitemap Generator Utility
-// Generates XML sitemap from your posts
-
 import { Post } from '@/types/post';
 import { posts as staticPosts } from '@/data/posts';
+import { categories } from '@/data/categories';
 
-const SITE_URL = 'https://trendwatchnow.com';
+const DOMAIN = 'https://trendwatchnow.com';
 
-// Static pages that should always be in sitemap
-const STATIC_PAGES = [
-  { path: '/', priority: '1.0', changefreq: 'daily' },
-  { path: '/about', priority: '0.8', changefreq: 'monthly' },
-  { path: '/contact', priority: '0.8', changefreq: 'monthly' },
-  { path: '/privacy-policy', priority: '0.5', changefreq: 'yearly' },
-  { path: '/terms-of-service', priority: '0.5', changefreq: 'yearly' },
-  { path: '/disclaimer', priority: '0.5', changefreq: 'yearly' },
-];
-
-// Generate URL-friendly slug from title
+// Generate a URL-friendly slug from a title
 const generateSlug = (title: string): string => {
   return title
     .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, '')    // Remove special characters
-    .replace(/\s+/g, '-')             // Replace spaces with hyphens
-    .replace(/-+/g, '-')              // Replace multiple hyphens with single
-    .replace(/^-|-$/g, '')            // Remove leading/trailing hyphens
-    .substring(0, 60);                // Limit length
+    .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .substring(0, 60) // Limit length
+    .replace(/-$/, ''); // Remove trailing hyphen
 };
 
-// Check if an ID looks like a Firebase auto-generated ID
-const isFirebaseId = (id: string): boolean => {
-  // Firebase IDs are 20 characters of alphanumeric
-  return /^[a-zA-Z0-9]{20}$/.test(id);
-};
-
-// Get the best URL path for a post
-const getPostUrlPath = (post: Post): string => {
-  // If post has a slug field, use it
-  if (post.slug) {
-    return post.slug;
-  }
-  
-  // If ID is human-readable (like 'ai-wars-2025'), use it
-  if (!isFirebaseId(post.id)) {
-    return post.id;
-  }
-  
-  // Generate slug from title
-  return generateSlug(post.title);
-};
-
-// Helper function to safely convert any date format to YYYY-MM-DD string
-const formatDateSafe = (dateValue: unknown): string => {
-  const today = new Date().toISOString().split('T')[0];
-  
-  // If no value, return today
-  if (!dateValue) return today;
-  
+// Safe date formatter that handles various date formats
+const formatDate = (date: unknown): string => {
   try {
-    // If it's already a string in YYYY-MM-DD format
-    if (typeof dateValue === 'string') {
-      // Check if it contains 'T' (ISO format)
-      if (dateValue.includes('T')) {
-        return dateValue.split('T')[0];
-      }
-      // Already in YYYY-MM-DD format
-      return dateValue;
-    }
-    
-    // If it's a Firebase Timestamp (has toDate method)
-    if (dateValue && typeof dateValue === 'object') {
-      // Check for Firestore Timestamp
-      if ('toDate' in dateValue && typeof (dateValue as { toDate: () => Date }).toDate === 'function') {
-        const timestamp = dateValue as { toDate: () => Date };
-        return timestamp.toDate().toISOString().split('T')[0];
-      }
-      
-      // Check for seconds property (Firestore Timestamp structure)
-      if ('seconds' in dateValue) {
-        const seconds = (dateValue as { seconds: number }).seconds;
-        return new Date(seconds * 1000).toISOString().split('T')[0];
-      }
+    // If it's a Firestore Timestamp
+    if (date && typeof date === 'object' && 'seconds' in date) {
+      const timestamp = date as { seconds: number };
+      return new Date(timestamp.seconds * 1000).toISOString().split('T')[0];
     }
     
     // If it's a Date object
-    if (dateValue instanceof Date) {
-      return dateValue.toISOString().split('T')[0];
+    if (date instanceof Date) {
+      return date.toISOString().split('T')[0];
     }
     
-    // If it's a number (Unix timestamp in milliseconds)
-    if (typeof dateValue === 'number') {
-      return new Date(dateValue).toISOString().split('T')[0];
+    // If it's a string
+    if (typeof date === 'string') {
+      // Already in YYYY-MM-DD format
+      if (/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        return date;
+      }
+      // Try to parse it
+      const parsed = new Date(date);
+      if (!isNaN(parsed.getTime())) {
+        return parsed.toISOString().split('T')[0];
+      }
     }
     
-    return today;
-  } catch (error) {
-    console.warn('Error formatting date:', error);
-    return today;
+    // If it's a number (unix timestamp)
+    if (typeof date === 'number') {
+      return new Date(date).toISOString().split('T')[0];
+    }
+    
+    // Fallback to today
+    return new Date().toISOString().split('T')[0];
+  } catch {
+    return new Date().toISOString().split('T')[0];
   }
 };
 
-// Get all posts (Firebase + Static)
-const getAllPosts = (firebasePosts: Post[]): Post[] => {
-  // Get static post IDs to avoid duplicates
-  const staticPostIds = new Set(staticPosts.map(p => p.id));
-  
-  // Filter out Firebase posts that might duplicate static posts
-  const uniqueFirebasePosts = firebasePosts.filter(p => !staticPostIds.has(p.id));
-  
-  // Combine static posts + Firebase posts
-  return [...staticPosts, ...uniqueFirebasePosts];
-};
-
-// Generate sitemap XML from posts
-export const generateSitemapXML = (firebasePosts: Post[]): string => {
+export const generateSitemap = (firebasePosts: Post[] = []): string => {
   const today = new Date().toISOString().split('T')[0];
   
-  // Get all posts (static + Firebase)
-  const allPosts = getAllPosts(firebasePosts);
+  // Create a map to track unique posts by slug (to avoid duplicates)
+  const uniquePosts = new Map<string, { slug: string; date: string }>();
   
-  // Static pages XML
-  const staticPagesXML = STATIC_PAGES.map(page => `
-  <url>
-    <loc>${SITE_URL}${page.path}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`).join('');
-
-  // Blog posts XML - only published posts
-  const publishedPosts = allPosts.filter(post => post.status === 'published' || !post.status);
+  // Add static posts (use slug from title, not the numeric ID)
+  staticPosts.forEach(post => {
+    const slug = generateSlug(post.title);
+    if (!uniquePosts.has(slug)) {
+      uniquePosts.set(slug, {
+        slug,
+        date: formatDate(post.date)
+      });
+    }
+  });
   
-  const postsXML = publishedPosts.map(post => {
-    // Get readable URL path
-    const urlPath = getPostUrlPath(post);
-    
-    // Safely format the date
-    const postDate = formatDateSafe(post.updatedAt) || formatDateSafe(post.date) || today;
-    
-    return `
-  <url>
-    <loc>${SITE_URL}/article/${urlPath}</loc>
-    <lastmod>${postDate}</lastmod>
+  // Add Firebase posts (filter only published)
+  const publishedFirebasePosts = firebasePosts.filter(p => p.status === 'published' || !p.status);
+  
+  publishedFirebasePosts.forEach(post => {
+    const slug = post.slug || generateSlug(post.title);
+    // Only add if not already present, or update if Firebase version is newer
+    if (!uniquePosts.has(slug)) {
+      uniquePosts.set(slug, {
+        slug,
+        date: formatDate(post.updatedAt || post.createdAt || post.date)
+      });
+    }
+  });
+  
+  // Generate post URLs
+  const postUrls = Array.from(uniquePosts.values())
+    .map(post => `  <url>
+    <loc>${DOMAIN}/article/${post.slug}</loc>
+    <lastmod>${post.date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>`;
-  }).join('');
-
-  // Category pages XML
-  const categories = ['tech', 'mobile', 'news', 'events', 'lifestyle', 'gaming', 'finance', 'sports', 'entertainment', 'health', 'science', 'politics'];
-  const categoriesXML = categories.map(cat => `
-  <url>
-    <loc>${SITE_URL}/category/${cat}</loc>
+  </url>`)
+    .join('\n');
+  
+  // Generate category URLs
+  const categoryUrls = Object.keys(categories)
+    .map(categoryId => `  <url>
+    <loc>${DOMAIN}/category/${categoryId}</loc>
     <lastmod>${today}</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
-  </url>`).join('');
-
-  // Count posts by type
-  const staticCount = staticPosts.length;
-  const firebaseCount = publishedPosts.length - staticCount;
-
-  // Complete sitemap
+  </url>`)
+    .join('\n');
+  
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- Generated automatically on ${today} -->
-  <!-- Total posts: ${publishedPosts.length} (Static: ${staticCount}, Firebase: ${firebaseCount > 0 ? firebaseCount : 0}) -->
-  
-  <!-- Static Pages -->${staticPagesXML}
-  
-  <!-- Blog Posts -->${postsXML}
-  
-  <!-- Category Pages -->${categoriesXML}
+  <!-- Homepage -->
+  <url>
+    <loc>${DOMAIN}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Static Pages -->
+  <url>
+    <loc>${DOMAIN}/about</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${DOMAIN}/contact</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>${DOMAIN}/privacy-policy</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>${DOMAIN}/terms-of-service</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>${DOMAIN}/disclaimer</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- Category Pages -->
+${categoryUrls}
+
+  <!-- Blog Posts -->
+${postUrls}
 </urlset>`;
 
   return sitemap;
 };
 
-// Download sitemap as file
-export const downloadSitemap = (posts: Post[]): boolean => {
+// Download sitemap as a file
+export const downloadSitemap = (firebasePosts: Post[] = []): void => {
   try {
-    const sitemap = generateSitemapXML(posts);
+    const sitemap = generateSitemap(firebasePosts);
     const blob = new Blob([sitemap], { type: 'application/xml' });
     const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a')
-    link.href = url;
-    link.download = 'sitemap.xml';
-    link.style.display = 'none';
-    document.body.appendChild(link);
-    link.click();
-    
-    // Cleanup
-    setTimeout(() => {
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }, 100);
-    
-    return true;
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'sitemap.xml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   } catch (error) {
     console.error('Failed to download sitemap:', error);
-    alert('Failed to download sitemap. Please try again.');
-    return false;
+    alert('Failed to generate sitemap. Please try again.');
   }
 };
 
 // Copy sitemap to clipboard
-export const copySitemapToClipboard = async (posts: Post[]): Promise<boolean> => {
+export const copySitemapToClipboard = async (firebasePosts: Post[] = []): Promise<boolean> => {
   try {
-    const sitemap = generateSitemapXML(posts);
+    const sitemap = generateSitemap(firebasePosts);
     
     // Try modern clipboard API first
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(sitemap);
       return true;
+    } else {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = sitemap;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      const success = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return success;
     }
-    
-    // Fallback for older browsers
-    const textArea = document.createElement('textarea');
-    textArea.value = sitemap;
-    textArea.style.position = 'fixed';
-    textArea.style.left = '-999999px';
-    textArea.style.top = '-999999px';
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    
-    const successful = document.execCommand('copy');
-    document.body.removeChild(textArea);
-    
-    if (!successful) {
-      throw new Error('execCommand copy failed');
-    }
-    
-    return true;
   } catch (error) {
     console.error('Failed to copy sitemap:', error);
-    alert('Failed to copy sitemap. Please try the download option instead.');
+    alert('Failed to copy sitemap. Please try again.');
     return false;
   }
-};
-
-// Preview sitemap in console (for debugging)
-export const previewSitemap = (posts: Post[]): void => {
-  const sitemap = generateSitemapXML(posts);
-  console.log('=== SITEMAP PREVIEW ===');
-  console.log(sitemap);
-  console.log('=== END SITEMAP ===');
 };
