@@ -15,6 +15,56 @@ const STATIC_PAGES = [
   { path: '/disclaimer', priority: '0.5', changefreq: 'yearly' },
 ];
 
+// Helper function to safely convert any date format to YYYY-MM-DD string
+const formatDateSafe = (dateValue: unknown): string => {
+  const today = new Date().toISOString().split('T')[0];
+  
+  // If no value, return today
+  if (!dateValue) return today;
+  
+  try {
+    // If it's already a string in YYYY-MM-DD format
+    if (typeof dateValue === 'string') {
+      // Check if it contains 'T' (ISO format)
+      if (dateValue.includes('T')) {
+        return dateValue.split('T')[0];
+      }
+      // Already in YYYY-MM-DD format
+      return dateValue;
+    }
+    
+    // If it's a Firebase Timestamp (has toDate method)
+    if (dateValue && typeof dateValue === 'object') {
+      // Check for Firestore Timestamp
+      if ('toDate' in dateValue && typeof (dateValue as { toDate: () => Date }).toDate === 'function') {
+        const timestamp = dateValue as { toDate: () => Date };
+        return timestamp.toDate().toISOString().split('T')[0];
+      }
+      
+      // Check for seconds property (Firestore Timestamp structure)
+      if ('seconds' in dateValue) {
+        const seconds = (dateValue as { seconds: number }).seconds;
+        return new Date(seconds * 1000).toISOString().split('T')[0];
+      }
+    }
+    
+    // If it's a Date object
+    if (dateValue instanceof Date) {
+      return dateValue.toISOString().split('T')[0];
+    }
+    
+    // If it's a number (Unix timestamp in milliseconds)
+    if (typeof dateValue === 'number') {
+      return new Date(dateValue).toISOString().split('T')[0];
+    }
+    
+    return today;
+  } catch (error) {
+    console.warn('Error formatting date:', error);
+    return today;
+  }
+};
+
 // Generate sitemap XML from posts
 export const generateSitemapXML = (posts: Post[]): string => {
   const today = new Date().toISOString().split('T')[0];
@@ -30,13 +80,18 @@ export const generateSitemapXML = (posts: Post[]): string => {
 
   // Blog posts XML - only published posts
   const publishedPosts = posts.filter(post => post.status === 'published' || !post.status);
-  const postsXML = publishedPosts.map(post => `
+  const postsXML = publishedPosts.map(post => {
+    // Safely format the date
+    const postDate = formatDateSafe(post.updatedAt) || formatDateSafe(post.date) || today;
+    
+    return `
   <url>
     <loc>${SITE_URL}/article/${post.id}</loc>
-    <lastmod>${post.updatedAt?.split('T')[0] || post.date || today}</lastmod>
+    <lastmod>${postDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-  </url>`).join('');
+  </url>`;
+  }).join('');
 
   // Category pages XML
   const categories = ['tech', 'mobile', 'news', 'events', 'lifestyle', 'gaming', 'finance', 'sports', 'entertainment', 'health', 'science', 'politics'];
@@ -71,7 +126,7 @@ export const downloadSitemap = (posts: Post[]): boolean => {
     const blob = new Blob([sitemap], { type: 'application/xml' });
     const url = URL.createObjectURL(blob);
     
-    const link = document.createElement('a');
+    const link = document.createElement('a')
     link.href = url;
     link.download = 'sitemap.xml';
     link.style.display = 'none';
