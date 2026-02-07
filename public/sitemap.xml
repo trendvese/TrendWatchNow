@@ -1,182 +1,217 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-  
-  <!-- Homepage -->
-  <url>
-    <loc>https://trendwatchnow.com/</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- Static Pages (Required for AdSense) -->
-  <url>
-    <loc>https://trendwatchnow.com/about</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/contact</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/privacy-policy</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/terms-of-service</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/disclaimer</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <!-- Category Pages -->
-  <url>
-    <loc>https://trendwatchnow.com/category/tech</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/mobile</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/news</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/events</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/lifestyle</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/gaming</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/finance</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/sports</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/entertainment</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/health</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/science</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/category/politics</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
-  <!-- Articles -->
-  <url>
-    <loc>https://trendwatchnow.com/article/ai-wars-2025</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/bitcoin-halving-2024</loc>
-    <lastmod>2025-01-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/global-conflicts-2024</loc>
-    <lastmod>2025-01-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/stock-market-2025</loc>
-    <lastmod>2025-01-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/ev-wars-2025</loc>
-    <lastmod>2025-01-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/apple-vision-pro-2</loc>
-    <lastmod>2025-01-15</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/samsung-galaxy-s25-ultra</loc>
-    <lastmod>2025-01-14</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/ces-2024-highlights</loc>
-    <lastmod>2025-01-12</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/openai-gpt5-announcement</loc>
-    <lastmod>2025-01-13</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://trendwatchnow.com/article/gta6-trailer-record</loc>
-    <lastmod>2025-01-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  
+This XML file does not appear to have any style information associated with it. The document tree is shown below.
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<!--  Homepage  -->
+<url>
+<loc>https://trendwatchnow.com</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>daily</changefreq>
+<priority>1.0</priority>
+</url>
+<!--  Static Pages  -->
+<url>
+<loc>https://trendwatchnow.com/about</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/contact</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.8</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/privacy-policy</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>yearly</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/terms-of-service</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>yearly</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/disclaimer</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>yearly</changefreq>
+<priority>0.5</priority>
+</url>
+<!--  Category Pages  -->
+<url>
+<loc>https://trendwatchnow.com/category/tech</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/mobile</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/news</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/events</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/lifestyle</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/gaming</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/finance</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/sports</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/entertainment</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/health</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/science</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/category/politics</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.7</priority>
+</url>
+<!--  Blog Posts  -->
+<url>
+<loc>https://trendwatchnow.com/article/ai-wars-2025-openai-vs-google-vs-anthropic-who-will-win-the</loc>
+<lastmod>2025-01-18</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/bitcoin-halving-2024-the-crypto-bull-run-everything-you-need</loc>
+<lastmod>2025-01-17</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/global-conflicts-2024-2025-understanding-the-worlds-major-cr</loc>
+<lastmod>2025-01-16</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/stock-market-2025-recession-or-rally-expert-predictions-inve</loc>
+<lastmod>2025-01-15</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/electric-vehicle-wars-2025-tesla-vs-byd-vs-the-world-who-wil</loc>
+<lastmod>2025-01-14</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/apple-vision-pro-2-the-future-of-spatial-computing-is-here</loc>
+<lastmod>2024-01-15</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/samsung-galaxy-s25-ultra-a-complete-redesign-after-5-years</loc>
+<lastmod>2024-01-14</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/ces-2024-the-10-gadgets-that-stole-the-show</loc>
+<lastmod>2024-01-13</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/openai-announces-gpt-5-it-understands-context-like-humans</loc>
+<lastmod>2024-01-12</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/the-rise-of-digital-minimalism-why-gen-z-is-ditching-smartph</loc>
+<lastmod>2024-01-11</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/gta-6-trailer-breaks-every-record-100m-views-in-24-hours</loc>
+<lastmod>2024-01-10</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/spacex-starship-successfully-reaches-orbit</loc>
+<lastmod>2024-01-09</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/oneplus-13-the-flagship-killer-returns-with-a-vengeance</loc>
+<lastmod>2024-01-08</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/the-rise-of-moltbook-inside-the-secret-internet-built-for-ai</loc>
+<lastmod>2026-02-07</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/the-samsung-galaxy-s26-ultra-everything-we-know-so-far</loc>
+<lastmod>2026-02-04</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/consumer-ai-boom-65-of-people-now-use-it-dailywhats-next</loc>
+<lastmod>2026-02-03</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
+<url>
+<loc>https://trendwatchnow.com/article/flash-sale-or-warning-sign-making-sense-of-the-gold-and-silv</loc>
+<lastmod>2026-02-04</lastmod>
+<changefreq>weekly</changefreq>
+<priority>0.9</priority>
+</url>
 </urlset>
