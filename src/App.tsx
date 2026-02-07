@@ -44,7 +44,15 @@ function HomePage() {
   // Track page views
   usePageTracking(location.pathname, 'TrendWatch Now - Home');
   
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('trendwatch_darkmode');
+    return saved !== null ? saved === 'true' : true;
+  });
+  
+  // Persist dark mode to localStorage
+  useEffect(() => {
+    localStorage.setItem('trendwatch_darkmode', String(darkMode));
+  }, [darkMode]);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
@@ -431,6 +439,12 @@ function ArticlePage() {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  
+  // Get dark mode from localStorage (persisted from HomePage)
+  const [darkMode] = useState(() => {
+    const saved = localStorage.getItem('trendwatch_darkmode');
+    return saved !== null ? saved === 'true' : true;
+  });
 
   useEffect(() => {
     const findPost = async () => {
@@ -513,7 +527,7 @@ function ArticlePage() {
     );
   }
 
-  return <ArticleReader post={post} darkMode={true} onClose={() => navigate('/')} />;
+  return <ArticleReader post={post} darkMode={darkMode} onClose={() => navigate('/')} />;
 }
 
 // Category Page Component

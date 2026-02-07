@@ -328,7 +328,10 @@ html {
   background: rgba(139, 92, 246, 0.1);
 }
 
-/* Dark Mode Adjustments */
+/* ==========================================
+   DARK MODE ADJUSTMENTS
+   ========================================== */
+
 .dark .markdown-content .content-h2,
 .dark .markdown-content .content-h3,
 .dark .markdown-content .content-h4 {
@@ -336,18 +339,68 @@ html {
 }
 
 .dark .markdown-content .content-p {
-  color: #cbd5e1;
+  color: #e2e8f0;
 }
 
 .dark .markdown-content blockquote {
-  background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15));
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+  color: #e2e8f0;
+}
+
+.dark .markdown-content blockquote p {
+  color: #e2e8f0;
+}
+
+/* Lists - Dark Mode */
+.dark .markdown-content .content-ul .content-li,
+.dark .markdown-content .content-ol .content-li-ordered {
+  color: #e2e8f0;
+}
+
+.dark .markdown-content .content-li .content-bold,
+.dark .markdown-content .content-li-ordered .content-bold {
+  color: #ffffff;
+}
+
+/* Tables - Dark Mode */
+.dark .markdown-content .content-table {
+  background: #1e293b;
 }
 
 .dark .markdown-content .content-table td {
+  color: #e2e8f0;
   border-color: rgba(139, 92, 246, 0.3);
+  background: #1e293b;
 }
 
-/* Light Mode Adjustments */
+.dark .markdown-content .content-table tr:nth-child(even) td {
+  background: #0f172a;
+}
+
+.dark .markdown-content .content-table tr:hover td {
+  background: rgba(139, 92, 246, 0.2);
+}
+
+/* Bold text in dark mode */
+.dark .markdown-content .content-bold {
+  color: #ffffff;
+}
+
+/* Italic text in dark mode */
+.dark .markdown-content .content-italic {
+  color: #e2e8f0;
+}
+
+/* Inline code - Dark Mode */
+.dark .markdown-content .inline-code {
+  background: rgba(139, 92, 246, 0.3);
+  color: #c4b5fd;
+}
+
+/* ==========================================
+   LIGHT MODE ADJUSTMENTS
+   ========================================== */
+
 .light .markdown-content .content-h2,
 .light .markdown-content .content-h3,
 .light .markdown-content .content-h4 {
@@ -358,10 +411,58 @@ html {
   color: #475569;
 }
 
+.light .markdown-content blockquote {
+  color: #475569;
+}
+
+/* Lists - Light Mode */
+.light .markdown-content .content-ul .content-li,
+.light .markdown-content .content-ol .content-li-ordered {
+  color: #475569;
+}
+
+.light .markdown-content .content-li .content-bold,
+.light .markdown-content .content-li-ordered .content-bold {
+  color: #1e293b;
+}
+
+/* Tables - Light Mode */
+.light .markdown-content .content-table {
+  background: #ffffff;
+}
+
+.light .markdown-content .content-table td {
+  color: #334155;
+  border-color: #e2e8f0;
+  background: #ffffff;
+}
+
+.light .markdown-content .content-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.light .markdown-content .content-table tr:hover td {
+  background: rgba(139, 92, 246, 0.1);
+}
+
+/* Bold text in light mode */
+.light .markdown-content .content-bold {
+  color: #0f172a;
+}
+
+/* Italic text in light mode */
+.light .markdown-content .content-italic {
+  color: #334155;
+}
+
 .light .markdown-content .inline-code {
   background: rgba(139, 92, 246, 0.15);
   color: #7c3aed;
 }
+
+/* ==========================================
+   AD PLACEHOLDER
+   ========================================== */
 
 /* Ad Placeholder in content */
 .markdown-content .ad-placeholder {
