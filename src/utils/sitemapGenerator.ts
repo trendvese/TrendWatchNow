@@ -3,7 +3,7 @@
 
 import { Post } from '@/types/post';
 
-const SITE_URL = 'https://trendverse-blog.web.app';
+const SITE_URL = 'https://trendwatchnow.com';
 
 // Static pages that should always be in sitemap
 const STATIC_PAGES = [
@@ -28,13 +28,12 @@ export const generateSitemapXML = (posts: Post[]): string => {
     <priority>${page.priority}</priority>
   </url>`).join('');
 
-  // Blog posts XML
-  const postsXML = posts
-    .filter(post => post.status === 'published')
-    .map(post => `
+  // Blog posts XML - only published posts
+  const publishedPosts = posts.filter(post => post.status === 'published' || !post.status);
+  const postsXML = publishedPosts.map(post => `
   <url>
     <loc>${SITE_URL}/article/${post.id}</loc>
-    <lastmod>${post.updatedAt?.split('T')[0] || post.date}</lastmod>
+    <lastmod>${post.updatedAt?.split('T')[0] || post.date || today}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>`).join('');
@@ -53,6 +52,7 @@ export const generateSitemapXML = (posts: Post[]): string => {
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Generated automatically on ${today} -->
+  <!-- Total posts: ${publishedPosts.length} -->
   
   <!-- Static Pages -->${staticPagesXML}
   
@@ -65,28 +65,73 @@ export const generateSitemapXML = (posts: Post[]): string => {
 };
 
 // Download sitemap as file
-export const downloadSitemap = (posts: Post[]): void => {
-  const sitemap = generateSitemapXML(posts);
-  const blob = new Blob([sitemap], { type: 'application/xml' });
-  const url = URL.createObjectURL(blob);
-  
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'sitemap.xml';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+export const downloadSitemap = (posts: Post[]): boolean => {
+  try {
+    const sitemap = generateSitemapXML(posts);
+    const blob = new Blob([sitemap], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'sitemap.xml';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    setTimeout(() => {
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, 100);
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to download sitemap:', error);
+    alert('Failed to download sitemap. Please try again.');
+    return false;
+  }
 };
 
 // Copy sitemap to clipboard
 export const copySitemapToClipboard = async (posts: Post[]): Promise<boolean> => {
-  const sitemap = generateSitemapXML(posts);
   try {
-    await navigator.clipboard.writeText(sitemap);
+    const sitemap = generateSitemapXML(posts);
+    
+    // Try modern clipboard API first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(sitemap);
+      return true;
+    }
+    
+    // Fallback for older browsers
+    const textArea = document.createElement('textarea');
+    textArea.value = sitemap;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    const successful = document.execCommand('copy');
+    document.body.removeChild(textArea);
+    
+    if (!successful) {
+      throw new Error('execCommand copy failed');
+    }
+    
     return true;
   } catch (error) {
     console.error('Failed to copy sitemap:', error);
+    alert('Failed to copy sitemap. Please try the download option instead.');
     return false;
   }
+};
+
+// Preview sitemap in console (for debugging)
+export const previewSitemap = (posts: Post[]): void => {
+  const sitemap = generateSitemapXML(posts);
+  console.log('=== SITEMAP PREVIEW ===');
+  console.log(sitemap);
+  console.log('=== END SITEMAP ===');
 };

@@ -165,7 +165,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
             <span className="text-white font-bold text-lg">T</span>
           </div>
           <div>
-            <h1 className="font-bold">TrendVerse</h1>
+            <h1 className="font-bold">TrendWatch Now</h1>
             <p className="text-xs text-slate-500">Admin Panel</p>
           </div>
         </div>
@@ -627,7 +627,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   <li>Replace the <code className="px-1 bg-slate-800 rounded">public/sitemap.xml</code> file with the downloaded one</li>
                   <li>Run <code className="px-1 bg-slate-800 rounded">npm run build</code></li>
                   <li>Deploy with <code className="px-1 bg-slate-800 rounded">firebase deploy</code></li>
-                  <li>Submit sitemap to Google: <code className="px-1 bg-slate-800 rounded">https://trendverse-blog.web.app/sitemap.xml</code></li>
+                  <li>Submit sitemap to Google: <code className="px-1 bg-slate-800 rounded">https://trendwatchnow.com/sitemap.xml</code></li>
                 </ol>
               </div>
             </div>
@@ -721,7 +721,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <a
-                  href="https://trendverse-blog.web.app"
+                  href="https://trendwatchnow.com"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-xl hover:bg-slate-800 transition-colors"
@@ -739,7 +739,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
                   <span>Firebase Console</span>
                 </a>
                 <a
-                  href="https://trendverse-blog.web.app/sitemap.xml"
+                  href="https://trendwatchnow.com/sitemap.xml"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-xl hover:bg-slate-800 transition-colors"
