@@ -2,6 +2,7 @@
 // Generates XML sitemap from your posts
 
 import { Post } from '@/types/post';
+import { posts as staticPosts } from '@/data/posts';
 
 const SITE_URL = 'https://trendwatchnow.com';
 
@@ -14,6 +15,39 @@ const STATIC_PAGES = [
   { path: '/terms-of-service', priority: '0.5', changefreq: 'yearly' },
   { path: '/disclaimer', priority: '0.5', changefreq: 'yearly' },
 ];
+
+// Generate URL-friendly slug from title
+const generateSlug = (title: string): string => {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')    // Remove special characters
+    .replace(/\s+/g, '-')             // Replace spaces with hyphens
+    .replace(/-+/g, '-')              // Replace multiple hyphens with single
+    .replace(/^-|-$/g, '')            // Remove leading/trailing hyphens
+    .substring(0, 60);                // Limit length
+};
+
+// Check if an ID looks like a Firebase auto-generated ID
+const isFirebaseId = (id: string): boolean => {
+  // Firebase IDs are 20 characters of alphanumeric
+  return /^[a-zA-Z0-9]{20}$/.test(id);
+};
+
+// Get the best URL path for a post
+const getPostUrlPath = (post: Post): string => {
+  // If post has a slug field, use it
+  if (post.slug) {
+    return post.slug;
+  }
+  
+  // If ID is human-readable (like 'ai-wars-2025'), use it
+  if (!isFirebaseId(post.id)) {
+    return post.id;
+  }
+  
+  // Generate slug from title
+  return generateSlug(post.title);
+};
 
 // Helper function to safely convert any date format to YYYY-MM-DD string
 const formatDateSafe = (dateValue: unknown): string => {
@@ -65,9 +99,24 @@ const formatDateSafe = (dateValue: unknown): string => {
   }
 };
 
+// Get all posts (Firebase + Static)
+const getAllPosts = (firebasePosts: Post[]): Post[] => {
+  // Get static post IDs to avoid duplicates
+  const staticPostIds = new Set(staticPosts.map(p => p.id));
+  
+  // Filter out Firebase posts that might duplicate static posts
+  const uniqueFirebasePosts = firebasePosts.filter(p => !staticPostIds.has(p.id));
+  
+  // Combine static posts + Firebase posts
+  return [...staticPosts, ...uniqueFirebasePosts];
+};
+
 // Generate sitemap XML from posts
-export const generateSitemapXML = (posts: Post[]): string => {
+export const generateSitemapXML = (firebasePosts: Post[]): string => {
   const today = new Date().toISOString().split('T')[0];
+  
+  // Get all posts (static + Firebase)
+  const allPosts = getAllPosts(firebasePosts);
   
   // Static pages XML
   const staticPagesXML = STATIC_PAGES.map(page => `
@@ -79,14 +128,18 @@ export const generateSitemapXML = (posts: Post[]): string => {
   </url>`).join('');
 
   // Blog posts XML - only published posts
-  const publishedPosts = posts.filter(post => post.status === 'published' || !post.status);
+  const publishedPosts = allPosts.filter(post => post.status === 'published' || !post.status);
+  
   const postsXML = publishedPosts.map(post => {
+    // Get readable URL path
+    const urlPath = getPostUrlPath(post);
+    
     // Safely format the date
     const postDate = formatDateSafe(post.updatedAt) || formatDateSafe(post.date) || today;
     
     return `
   <url>
-    <loc>${SITE_URL}/article/${post.id}</loc>
+    <loc>${SITE_URL}/article/${urlPath}</loc>
     <lastmod>${postDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -103,11 +156,15 @@ export const generateSitemapXML = (posts: Post[]): string => {
     <priority>0.7</priority>
   </url>`).join('');
 
+  // Count posts by type
+  const staticCount = staticPosts.length;
+  const firebaseCount = publishedPosts.length - staticCount;
+
   // Complete sitemap
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- Generated automatically on ${today} -->
-  <!-- Total posts: ${publishedPosts.length} -->
+  <!-- Total posts: ${publishedPosts.length} (Static: ${staticCount}, Firebase: ${firebaseCount > 0 ? firebaseCount : 0}) -->
   
   <!-- Static Pages -->${staticPagesXML}
   
