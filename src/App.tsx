@@ -113,7 +113,8 @@ function HomePage() {
 
   // Handle post click - navigate to article URL
   const handlePostClick = (post: Post) => {
-    const slug = generateSlug(post.title);
+    // Use the post's slug field if available, otherwise generate from title
+    const slug = post.slug || generateSlug(post.title);
     navigate(`/article/${slug}`);
   };
 
@@ -454,57 +455,84 @@ function ArticlePage() {
         return;
       }
 
-      const urlSlug = slug.toLowerCase();
+      const urlSlug = slug.toLowerCase().trim();
+      console.log('Looking for article with slug:', urlSlug);
 
-      // Check static posts - match by:
-      // 1. slug field (exact match)
-      // 2. slug field starts with URL slug
-      // 3. id field
-      // 4. generated slug from title
-      const staticPost = staticPosts.find(p => {
-        const postSlug = p.slug?.toLowerCase() || '';
-        const generatedSlug = generateSlug(p.title).toLowerCase();
-        const postId = p.id?.toLowerCase() || '';
-        
-        return (
-          postSlug === urlSlug ||
-          postSlug.startsWith(urlSlug) ||
-          urlSlug.startsWith(postSlug) ||
-          postId === urlSlug ||
-          generatedSlug === urlSlug ||
-          generatedSlug.startsWith(urlSlug) ||
-          urlSlug.startsWith(generatedSlug)
-        );
-      });
+      // Helper function to find post with priority-based matching
+      const findBestMatch = (posts: Post[]): Post | undefined => {
+        // Priority 1: Exact match on slug field
+        let found = posts.find(p => {
+          const postSlug = (p.slug || '').toLowerCase().trim();
+          return postSlug === urlSlug;
+        });
+        if (found) {
+          console.log('Found by exact slug match:', found.title);
+          return found;
+        }
 
+        // Priority 2: Exact match on generated slug from title
+        found = posts.find(p => {
+          const generatedSlug = generateSlug(p.title).toLowerCase();
+          return generatedSlug === urlSlug;
+        });
+        if (found) {
+          console.log('Found by generated slug match:', found.title);
+          return found;
+        }
+
+        // Priority 3: Match by post ID
+        found = posts.find(p => {
+          const postId = (p.id || '').toLowerCase();
+          return postId === urlSlug;
+        });
+        if (found) {
+          console.log('Found by ID match:', found.title);
+          return found;
+        }
+
+        // Priority 4: Partial match (for backward compatibility with old URLs)
+        // Only if no exact matches found
+        found = posts.find(p => {
+          const postSlug = (p.slug || '').toLowerCase().trim();
+          const generatedSlug = generateSlug(p.title).toLowerCase();
+          
+          // URL slug must be at least 10 chars for partial match to avoid false positives
+          if (urlSlug.length < 10) return false;
+          
+          return (
+            (postSlug && postSlug.startsWith(urlSlug)) ||
+            (postSlug && urlSlug.startsWith(postSlug) && postSlug.length > 10) ||
+            generatedSlug.startsWith(urlSlug) ||
+            (urlSlug.startsWith(generatedSlug) && generatedSlug.length > 10)
+          );
+        });
+        if (found) {
+          console.log('Found by partial match:', found.title);
+          return found;
+        }
+
+        return undefined;
+      };
+
+      // First check static posts
+      const staticPost = findBestMatch(staticPosts);
       if (staticPost) {
         setPost(staticPost);
         setLoading(false);
         return;
       }
 
-      // Check Firebase posts
+      // Then check Firebase posts
       try {
         const firebasePosts = await getFirebasePosts();
-        const firebasePost = firebasePosts.find(p => {
-          const postSlug = ((p as any).slug || '').toLowerCase();
-          const generatedSlug = generateSlug(p.title).toLowerCase();
-          const postId = p.id?.toLowerCase() || '';
-          
-          return (
-            postSlug === urlSlug ||
-            postSlug.startsWith(urlSlug) ||
-            urlSlug.startsWith(postSlug) ||
-            postId === urlSlug ||
-            generatedSlug === urlSlug ||
-            generatedSlug.startsWith(urlSlug) ||
-            urlSlug.startsWith(generatedSlug)
-          );
-        });
+        console.log('Firebase posts count:', firebasePosts.length);
+        
+        const firebasePost = findBestMatch(firebasePosts);
 
         if (firebasePost) {
           setPost(firebasePost);
         } else {
+          console.log('No post found for slug:', urlSlug);
           setNotFound(true);
         }
       } catch (error) {
