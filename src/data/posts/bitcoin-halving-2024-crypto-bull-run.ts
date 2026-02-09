@@ -1,7 +1,8 @@
 import { Post } from '@/types/post';
 
 export const bitcoinHalving2024: Post = {
-  id: 'bitcoin-halving-2024-crypto-bull-run',
+  id: 'bitcoin-halving-2024',
+  slug: 'bitcoin-halving-2024',
   title: 'Bitcoin Halving 2024 & The Crypto Bull Run: Everything You Need to Know',
   excerpt: 'Bitcoin\'s 4th halving has sparked a massive bull run. With ETFs approved and institutional money flooding in, is $200K BTC possible? Complete analysis inside.',
   content: `

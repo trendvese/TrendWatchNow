@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const spacexStarshipOrbit: Post = {
   id: '7',
+  slug: 'spacex-starship-orbit',
   title: 'SpaceX Starship Successfully Reaches Orbit',
   excerpt: 'Elon Musk\'s mega rocket achieves a historic milestone, paving the way for Mars missions.',
   content: `SpaceX has achieved what many thought impossible just a decade ago. The Starship rocket successfully completed a full orbital flight.

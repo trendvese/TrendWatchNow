@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const ces2024Highlights: Post = {
   id: '3',
+  slug: 'ces-2024-highlights',
   title: 'CES 2024: The 10 Gadgets That Stole the Show',
   excerpt: 'From transparent TVs to AI-powered robots, here are the innovations that defined this year\'s Consumer Electronics Show.',
   content: `CES 2024 has wrapped up, and what a show it was! Here are the gadgets that everyone is talking about.

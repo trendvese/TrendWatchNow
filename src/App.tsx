@@ -454,10 +454,27 @@ function ArticlePage() {
         return;
       }
 
-      // Check static posts
+      const urlSlug = slug.toLowerCase();
+
+      // Check static posts - match by:
+      // 1. slug field (exact match)
+      // 2. slug field starts with URL slug
+      // 3. id field
+      // 4. generated slug from title
       const staticPost = staticPosts.find(p => {
-        const postSlug = generateSlug(p.title);
-        return postSlug === slug || p.id === slug;
+        const postSlug = p.slug?.toLowerCase() || '';
+        const generatedSlug = generateSlug(p.title).toLowerCase();
+        const postId = p.id?.toLowerCase() || '';
+        
+        return (
+          postSlug === urlSlug ||
+          postSlug.startsWith(urlSlug) ||
+          urlSlug.startsWith(postSlug) ||
+          postId === urlSlug ||
+          generatedSlug === urlSlug ||
+          generatedSlug.startsWith(urlSlug) ||
+          urlSlug.startsWith(generatedSlug)
+        );
       });
 
       if (staticPost) {
@@ -470,8 +487,19 @@ function ArticlePage() {
       try {
         const firebasePosts = await getFirebasePosts();
         const firebasePost = firebasePosts.find(p => {
-          const postSlug = (p as any).slug || generateSlug(p.title);
-          return postSlug === slug || p.id === slug;
+          const postSlug = ((p as any).slug || '').toLowerCase();
+          const generatedSlug = generateSlug(p.title).toLowerCase();
+          const postId = p.id?.toLowerCase() || '';
+          
+          return (
+            postSlug === urlSlug ||
+            postSlug.startsWith(urlSlug) ||
+            urlSlug.startsWith(postSlug) ||
+            postId === urlSlug ||
+            generatedSlug === urlSlug ||
+            generatedSlug.startsWith(urlSlug) ||
+            urlSlug.startsWith(generatedSlug)
+          );
         });
 
         if (firebasePost) {

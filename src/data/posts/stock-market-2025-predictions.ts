@@ -1,7 +1,8 @@
 import { Post } from '@/types/post';
 
 export const stockMarket2025: Post = {
-  id: 'stock-market-2025-recession-or-rally',
+  id: 'stock-market-2025',
+  slug: 'stock-market-2025',
   title: 'Stock Market 2025: Recession or Rally? Expert Predictions & Investment Strategies',
   excerpt: 'Will 2025 bring a market crash or new all-time highs? We analyze Fed policy, earnings trends, and sector rotations to help you navigate the year ahead.',
   content: `

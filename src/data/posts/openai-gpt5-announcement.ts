@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const openaiGpt5Announcement: Post = {
   id: '4',
+  slug: 'openai-gpt5-announcement',
   title: 'OpenAI Announces GPT-5: "It Understands Context Like Humans"',
   excerpt: 'The next generation of AI promises unprecedented reasoning capabilities and could revolutionize how we interact with technology.',
   content: `OpenAI has officially unveiled GPT-5, and the improvements are nothing short of revolutionary.

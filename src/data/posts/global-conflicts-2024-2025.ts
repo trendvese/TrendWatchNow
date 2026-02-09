@@ -1,7 +1,8 @@
 import { Post } from '@/types/post';
 
 export const globalConflicts2024: Post = {
-  id: 'global-conflicts-2024-2025-complete-analysis',
+  id: 'global-conflicts-2024',
+  slug: 'global-conflicts-2024',
   title: 'Global Conflicts 2024-2025: Understanding the World\'s Major Crisis Zones',
   excerpt: 'From Ukraine to the Middle East, the world faces unprecedented tensions. A comprehensive, unbiased analysis of ongoing conflicts, their causes, and potential paths to peace.',
   content: `

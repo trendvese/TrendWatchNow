@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const appleVisionPro2: Post = {
   id: '1',
+  slug: 'apple-vision-pro-2',
   title: 'Apple Vision Pro 2: The Future of Spatial Computing is Here',
   excerpt: 'Apple unveils the next generation of mixed reality with groundbreaking features that blur the line between digital and physical worlds.',
   content: `The tech world is buzzing with excitement as Apple officially announces the Vision Pro 2, setting new standards for what we can expect from spatial computing devices.

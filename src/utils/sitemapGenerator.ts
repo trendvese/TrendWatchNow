@@ -60,9 +60,10 @@ export const generateSitemap = (firebasePosts: Post[] = []): string => {
   // Create a map to track unique posts by slug (to avoid duplicates)
   const uniquePosts = new Map<string, { slug: string; date: string }>();
   
-  // Add static posts (use slug from title, not the numeric ID)
+  // Add static posts (use slug field if available, otherwise generate from title)
   staticPosts.forEach(post => {
-    const slug = generateSlug(post.title);
+    // Use the slug field directly if available
+    const slug = post.slug || generateSlug(post.title);
     if (!uniquePosts.has(slug)) {
       uniquePosts.set(slug, {
         slug,
@@ -129,13 +130,13 @@ export const generateSitemap = (firebasePosts: Post[] = []): string => {
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>${DOMAIN}/privacy-policy</loc>
+    <loc>${DOMAIN}/privacy</loc>
     <lastmod>${today}</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>${DOMAIN}/terms-of-service</loc>
+    <loc>${DOMAIN}/terms</loc>
     <lastmod>${today}</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>

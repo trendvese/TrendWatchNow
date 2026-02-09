@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const gta6TrailerRecord: Post = {
   id: '6',
+  slug: 'gta6-trailer-record',
   title: 'GTA 6 Trailer Breaks Every Record: 100M Views in 24 Hours',
   excerpt: 'Rockstar Games shatters internet records with the most anticipated game trailer of all time.',
   content: `The wait is finally over. Rockstar Games dropped the first trailer for Grand Theft Auto 6, and the internet exploded.

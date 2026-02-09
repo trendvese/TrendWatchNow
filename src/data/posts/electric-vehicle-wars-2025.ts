@@ -1,7 +1,8 @@
 import { Post } from '@/types/post';
 
 export const electricVehicleWars2025: Post = {
-  id: 'electric-vehicle-wars-tesla-vs-byd-2025',
+  id: 'ev-wars-2025',
+  slug: 'ev-wars-2025',
   title: 'Electric Vehicle Wars 2025: Tesla vs BYD vs The World - Who Will Dominate?',
   excerpt: 'The EV market is exploding with competition. Tesla faces challenges from China\'s BYD, legacy automakers, and new startups. Complete industry analysis inside.',
   content: `

@@ -1,7 +1,8 @@
 import { Post } from '@/types/post';
 
 export const aiWars2025: Post = {
-  id: 'ai-wars-2025-openai-google-anthropic',
+  id: 'ai-wars-2025',
+  slug: 'ai-wars-2025',
   title: 'AI Wars 2025: OpenAI vs Google vs Anthropic - Who Will Win the Race?',
   excerpt: 'The battle for AI supremacy intensifies as tech giants pour billions into artificial intelligence. GPT-5, Gemini Ultra, and Claude 3 are reshaping our world. Here\'s everything you need to know.',
   content: `

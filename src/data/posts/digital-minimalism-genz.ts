@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const digitalMinimalismGenZ: Post = {
   id: '5',
+  slug: 'digital-minimalism-genz',
   title: 'The Rise of Digital Minimalism: Why Gen-Z is Ditching Smartphones',
   excerpt: 'A growing movement among young people is rejecting constant connectivity in favor of simpler, more intentional technology use.',
   content: `In a surprising twist, the generation that grew up with smartphones is now leading a movement to reduce screen time dramatically.

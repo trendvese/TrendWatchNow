@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const oneplus13Review: Post = {
   id: '8',
+  slug: 'oneplus-13-review',
   title: 'OnePlus 13: The Flagship Killer Returns with a Vengeance',
   excerpt: 'OnePlus reclaims its crown with aggressive pricing and specs that embarrass phones twice its price.',
   content: `OnePlus is back to its roots. The OnePlus 13 offers flagship specs at a price that undercuts the competition significantly.

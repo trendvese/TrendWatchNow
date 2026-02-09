@@ -2,6 +2,7 @@ import { Post } from '@/types/post';
 
 export const samsungGalaxyS25Ultra: Post = {
   id: '2',
+  slug: 'samsung-galaxy-s25-ultra',
   title: 'Samsung Galaxy S25 Ultra: A Complete Redesign After 5 Years',
   excerpt: 'Samsung breaks tradition with a radical new design language that prioritizes sustainability without compromising on premium feel.',
   content: `Samsung has finally done it. After years of iterative updates, the Galaxy S25 Ultra represents the most significant design overhaul in the company's flagship history.
